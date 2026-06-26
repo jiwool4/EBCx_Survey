@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EBCx Industry Practice Survey</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy: #1F3864;
+  --blue: #2E75B6;
+  --blue-lt: #EBF3FB;
+  --teal: #1D9E75;
+  --teal-lt: #E2EFDA;
+  --amber: #BA7517;
+  --amber-lt: #FFF2CC;
+  --red: #C0392B;
+  --red-lt: #FCE4D6;
+  --gray-50: #F7F8FA;
+  --gray-100: #ECEEF2;
+  --gray-200: #D4D8E0;
+  --gray-500: #7A8294;
+  --gray-700: #3D4556;
+  --gray-900: #1A1F2E;
+  --white: #FFFFFF;
+  --radius: 8px;
+  --radius-lg: 12px;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 16px rgba(0,0,0,0.06);
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--gray-900);
+  background: var(--gray-50);
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+.survey-header {
+  background: var(--navy);
+  color: white;
+  padding: 0 2rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+.header-inner {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+  gap: 1.5rem;
+}
+.header-title { font-size: 14px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; }
+.header-meta { font-size: 12px; color: rgba(255,255,255,0.6); white-space: nowrap; }
+
+/* ── Progress ── */
+.progress-wrap { flex: 1; min-width: 0; }
+.progress-track {
+  height: 4px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--teal);
+  border-radius: 2px;
+  transition: width 0.4s ease;
+}
+.progress-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  margin-top: 3px;
+  text-align: right;
+}
+
+/* ── Layout ── */
+.survey-body { max-width: 760px; margin: 0 auto; padding: 2rem 1rem 4rem; }
+
+/* ── Step ── */
+.step { display: none; }
+.step.active { display: block; animation: fadeIn 0.25s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:none; } }
+
+.step-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 6px;
+}
+.step-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.step-desc {
+  font-size: 14px;
+  color: var(--gray-500);
+  margin-bottom: 1.75rem;
+  max-width: 620px;
+}
+
+/* ── Card ── */
+.card {
+  background: var(--white);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow);
+}
+.card-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+  margin-bottom: 1rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--gray-100);
+}
+
+/* ── Form elements ── */
+.field { margin-bottom: 1.25rem; }
+.field:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--gray-700);
+  margin-bottom: 6px;
+}
+label .req { color: var(--red); margin-left: 2px; }
+label .hint { font-weight: 400; color: var(--gray-500); margin-left: 4px; }
+
+select, input[type="text"], input[type="number"], textarea {
+  width: 100%;
+  height: 38px;
+  padding: 0 10px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 14px;
+  color: var(--gray-900);
+  background: var(--white);
+  transition: border-color 0.15s;
+  appearance: none;
+}
+select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237A8294' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; padding-right: 28px; cursor: pointer; }
+textarea { height: auto; padding: 8px 10px; resize: vertical; }
+input[type="number"] { -moz-appearance: textfield; }
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+select:focus, input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(46,117,182,0.12);
+}
+select.error, input.error, textarea.error {
+  border-color: var(--red);
+  box-shadow: 0 0 0 3px rgba(192,57,43,0.1);
+}
+
+.field-error {
+  font-size: 12px;
+  color: var(--red);
+  margin-top: 4px;
+  display: none;
+}
+.field-error.visible { display: block; }
+
+/* ── Budget allocation rows ── */
+.budget-header {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px;
+  gap: 8px;
+  padding: 0 0 6px;
+  border-bottom: 1px solid var(--gray-100);
+  margin-bottom: 8px;
+}
+.budget-header span {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--gray-500);
+  text-align: right;
+}
+.budget-header span:first-child { text-align: left; }
+
+.budget-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--gray-50);
+}
+.budget-row:last-child { border-bottom: none; }
+
+.budget-label {
+  font-size: 13px;
+  color: var(--gray-700);
+  line-height: 1.4;
+}
+.budget-label.phase-label {
+  font-weight: 600;
+  color: var(--navy);
+  font-size: 14px;
+}
+
+.pct-input {
+  width: 90px !important;
+  text-align: right;
+  height: 34px !important;
+  font-size: 14px !important;
+  padding-right: 24px !important;
+}
+.pct-wrap {
+  position: relative;
+}
+.pct-wrap::after {
+  content: '%';
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 13px;
+  color: var(--gray-500);
+  pointer-events: none;
+}
+
+/* ── Budget totals bar ── */
+.budget-total-bar {
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  padding: 10px 14px;
+  margin-top: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+.budget-total-label { font-size: 13px; color: var(--gray-500); }
+.budget-total-value {
+  font-size: 16px;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+.budget-total-value.ok { color: var(--teal); }
+.budget-total-value.warn { color: var(--amber); }
+.budget-total-value.over { color: var(--red); }
+.budget-total-hint {
+  font-size: 12px;
+  margin-top: 4px;
+  display: none;
+}
+.budget-total-hint.visible { display: block; }
+.budget-total-hint.ok { color: var(--teal); }
+.budget-total-hint.warn { color: var(--amber); }
+.budget-total-hint.over { color: var(--red); }
+
+.track-wrap {
+  flex: 1;
+  height: 6px;
+  background: var(--gray-200);
+  border-radius: 3px;
+  overflow: hidden;
+  max-width: 200px;
+}
+.track-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.2s, background 0.2s;
+}
+
+/* ── Finding type rows ── */
+.finding-row {
+  display: grid;
+  grid-template-columns: 1fr 90px;
+  gap: 8px;
+  align-items: center;
+  padding: 5px 0;
+  border-bottom: 1px solid var(--gray-50);
+}
+.finding-row:last-child { border-bottom: none; }
+
+/* ── Likert scale ── */
+.likert-wrap {
+  display: flex;
+  gap: 8px;
+  margin-top: 6px;
+}
+.likert-opt {
+  flex: 1;
+  text-align: center;
+}
+.likert-opt input[type="radio"] { display: none; }
+.likert-opt label {
+  display: block;
+  padding: 8px 4px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 13px;
+  color: var(--gray-700);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  margin: 0;
+  font-weight: 400;
+}
+.likert-opt input:checked + label {
+  background: var(--blue);
+  border-color: var(--blue);
+  color: white;
+  font-weight: 500;
+}
+.likert-opt label:hover { border-color: var(--blue); background: var(--blue-lt); }
+.likert-ends {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 4px;
+}
+
+/* ── Buttons ── */
+.btn-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 2rem;
+  gap: 1rem;
+}
+.btn {
+  height: 42px;
+  padding: 0 24px;
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-primary {
+  background: var(--blue);
+  color: white;
+}
+.btn-primary:hover { background: var(--navy); }
+.btn-primary:disabled { background: var(--gray-200); color: var(--gray-500); cursor: not-allowed; }
+.btn-ghost {
+  background: transparent;
+  color: var(--gray-500);
+  border: 1px solid var(--gray-200);
+}
+.btn-ghost:hover { background: var(--gray-100); color: var(--gray-700); }
+.btn-success {
+  background: var(--teal);
+  color: white;
+}
+.btn-success:hover { background: #0F6E56; }
+
+/* ── Success screen ── */
+.success-screen {
+  text-align: center;
+  padding: 4rem 2rem;
+}
+.success-icon {
+  width: 64px;
+  height: 64px;
+  background: var(--teal-lt);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 28px;
+}
+.success-title { font-size: 24px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+.success-desc { font-size: 15px; color: var(--gray-500); max-width: 480px; margin: 0 auto 2rem; }
+
+/* ── Setup instructions overlay ── */
+.setup-note {
+  background: var(--amber-lt);
+  border: 1px solid #F0C040;
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--gray-700);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+.setup-note strong { color: var(--navy); }
+
+/* ── Responsive ── */
+@media (max-width: 500px) {
+  .header-meta { display: none; }
+  .survey-body { padding: 1.25rem 0.75rem 3rem; }
+  .budget-header, .budget-row { grid-template-columns: 1fr 80px; }
+  .budget-header span:nth-child(3), .budget-row > *:nth-child(3) { display: none; }
+  .likert-wrap { flex-wrap: wrap; }
+  .likert-opt { min-width: calc(33% - 4px); }
+}
+</style>
+</head>
+<body>
+
+<header class="survey-header">
+  <div class="header-inner">
+    <span class="header-title">EBCx Industry Survey</span>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      <div class="progress-label" id="progressLabel">Step 1 of 9</div>
+    </div>
+    <span class="header-meta">ESTCP EW23-8362</span>
+  </div>
+</header>
+
+<div class="survey-body">
+
+<!-- ─────────────────────────────────────────────────────────────
+     SETUP NOTE (remove once Google Form is configured)
+
+<div class="setup-note" id="setupNote">
+  <strong>⚙ Setup required before distributing:</strong> Replace <code>YOUR_GOOGLE_FORM_ACTION_URL</code> in the script at the bottom of this file with your Google Form's action URL. See the <strong>Google Form Setup Guide</strong> at the end of this file for step-by-step instructions, including the full list of entry IDs to create.
+</div>
+────────────────────────────────────────────────────────────── -->
+
+<!-- ══════════════════════════════════════════════════════
+     STEP 1 — Firm profile
+══════════════════════════════════════════════════════ -->
+<div class="step active" id="step-1">
+  <div class="step-eyebrow">Section 1 of 9</div>
+  <div class="step-title">About your firm</div>
+  <div class="step-desc">Tell us about your branch office and your experience with EBCx. All responses are anonymous.</div>
+
+  <div class="card">
+    <div class="card-title">Firm & office profile</div>
+
+    <div class="field">
+      <label>BCxA chapter <span class="req">*</span></label>
+      <select id="q_chapter" required>
+        <option value="">Select your chapter…</option>
+        <option>Mid-Atlantic</option><option>Northwest</option><option>Western Canada</option>
+        <option>California</option><option>Central</option><option>Southeast</option>
+        <option>Northeast</option><option>Texas</option><option>Eastern Canada</option>
+        <option>Mountain</option><option>Gulf Coast</option><option>Other</option>
+      </select>
+      <div class="field-error" id="err_chapter">Please select your BCxA chapter.</div>
+    </div>
+
+    <div class="field">
+      <label>Annual revenue of your firm <span class="req">*</span></label>
+      <select id="q_revenue" required>
+        <option value="">Select a range…</option>
+        <option>Less than $0.5M</option><option>$0.5M – $2M</option>
+        <option>$2M – $10M</option><option>$10M – $20M</option>
+        <option>$20M – $40M</option><option>$40M – $100M</option>
+        <option>Over $100M</option>
+      </select>
+      <div class="field-error" id="err_revenue">Please select a revenue range.</div>
+    </div>
+
+    <div class="field">
+      <label>Number of commissioning providers in your branch office <span class="req">*</span>
+        <span class="hint">(FTEs or FTE-equivalent)</span></label>
+      <input type="number" id="q_officesize" min="0" max="500" step="1" placeholder="e.g. 8">
+      <div class="field-error" id="err_officesize">Please enter a number between 0 and 500.</div>
+    </div>
+
+    <div class="field">
+      <label>What percentage of your company's revenue comes from EBCx projects? <span class="req">*</span></label>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="q_ebcx_rev" min="0" max="100" step="1" placeholder="0"></div>
+      <div class="field-error" id="err_ebcx_rev">Please enter a value between 0 and 100.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">EBCx experience</div>
+
+    <div class="field">
+      <label>Does your branch office have experience performing EBCx projects? <span class="req">*</span></label>
+      <select id="q_experience">
+        <option value="">Select…</option>
+        <option value="yes">Yes</option>
+        <option value="no">No — we have not performed EBCx projects</option>
+      </select>
+      <div class="field-error" id="err_experience">Please answer this question.</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <span></span>
+    <button class="btn btn-primary" onclick="goNext(1)">Continue →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     STEP 1b — No experience exit
+══════════════════════════════════════════════════════ -->
+<div class="step" id="step-1b">
+  <div class="step-eyebrow">Note</div>
+  <div class="step-title">Work scope questions skipped</div>
+  <div class="step-desc">Since your office doesn't have EBCx project experience, you'll skip to the final questions section. Your perspective on industry resources and contract documents is still valuable.</div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep('step-1')">← Back</button>
+    <button class="btn btn-primary" onclick="goStep('step-9')">Continue to final questions →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     STEP 2 — Phase budget allocation
+══════════════════════════════════════════════════════ -->
+<div class="step" id="step-2">
+  <div class="step-eyebrow">Section 2 of 9</div>
+  <div class="step-title">Phase budget allocation</div>
+  <div class="step-desc">For a typical EBCx project, what percentage of total project budget does each phase represent? Values must sum to exactly 100%.</div>
+
+  <div class="card">
+    <div class="budget-header">
+      <span>Phase</span>
+      <span>% of total</span>
+      <span style="color:transparent">x</span>
+    </div>
+    <div id="phaseRows"></div>
+    <div class="budget-total-bar">
+      <div>
+        <div class="budget-total-label">Total allocated</div>
+        <div class="budget-total-hint" id="phaseTotalHint"></div>
+      </div>
+      <div class="track-wrap"><div class="track-fill" id="phaseTrack" style="width:0%"></div></div>
+      <div class="budget-total-value" id="phaseTotalVal">0%</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep('step-1')">← Back</button>
+    <button class="btn btn-primary" id="btn2next" onclick="goNext(2)" disabled>Continue →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     STEPS 3–7 — Per-phase task allocation
+══════════════════════════════════════════════════════ -->
+<div class="step" id="step-3">
+  <div class="step-eyebrow">Section 3 of 9</div>
+  <div class="step-title">Planning phase — work scope</div>
+  <div class="step-desc">Within the Planning phase, what percentage of the <em>phase budget</em> does each task represent? Values must sum to 100%.</div>
+  <div class="card" id="tasks-planning"></div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep('step-2')">← Back</button>
+    <button class="btn btn-primary" id="btn3next" onclick="goNext(3)" disabled>Continue →</button>
+  </div>
+</div>
+
+<div class="step" id="step-4">
+  <div class="step-eyebrow">Section 4 of 9</div>
+  <div class="step-title">Initial assessment phase — work scope</div>
+  <div class="step-desc">Within the Initial Assessment phase, what percentage of the <em>phase budget</em> does each task represent? Values must sum to 100%.</div>
+  <div class="card" id="tasks-assessment"></div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep('step-3')">← Back</button>
+    <button class="btn btn-primary" id="btn4next" onclick="goNext(4)" disabled>Continue →</button>
+  </div>
+</div>
+
+<div class="step" id="step-5">
+  <div class="step-eyebrow">Section 5 of 9</div>
+  <div class="step-title">Investigation phase — work scope</div>
+  <div class="step-desc">Within the Investigation phase, what percentage of the <em>phase budget</em> does each task represent? Values must sum to 100%.</div>
+  <div class="card" id="tasks-investigation"></div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep('step-4')">← Back</button>
+    <button class="btn btn-primary" id="btn5next" onclick="goNext(5)" disabled>Continue →</button>
+  </div>
+</div>
+
+<div class="step" id="step-6">
+  <div class="step-eyebrow">Section 6 of 9</div>
+  <div class="step-title">Implementation phase — work scope</div>
+  <div class="step-desc">Within the Implementation phase, what percentage of the <em>phase budget</em> does each task represent? Values must sum to 100%.</div>
+  <div class="card" id="tasks-implementation"></div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep('step-5')">← Back</button>
+    <button class="btn btn-primary" id="btn6next" onclick="goNext(6)" disabled>Continue →</button>
+  </div>
+</div>
+
+<div class="step" id="step-7">
+  <div class="step-eyebrow">Section 7 of 9</div>
+  <div class="step-title">Hand-off phase — work scope</div>
+  <div class="step-desc">Within the Hand-off phase, what percentage of the <em>phase budget</em> does each task represent? Values must sum to 100%.</div>
+  <div class="card" id="tasks-handoff"></div>
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep('step-6')">← Back</button>
+    <button class="btn btn-primary" id="btn7next" onclick="goNext(7)" disabled>Continue →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     STEP 8 — Findings
+══════════════════════════════════════════════════════ -->
+<div class="step" id="step-8">
+  <div class="step-eyebrow">Section 8 of 9</div>
+  <div class="step-title">Investigation findings</div>
+  <div class="step-desc">Based on your EBCx experience, how does investigation scope typically break down by building system?</div>
+
+  <div class="card">
+    <div class="card-title">Investigation scope by system — must sum to 100%</div>
+    <div class="budget-header">
+      <span>System</span><span>% of scope</span><span style="color:transparent">x</span>
+    </div>
+    <div class="budget-row" id="sys-row-hvac">
+      <span class="budget-label">HVAC</span>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="sys_hvac" min="0" max="100" step="1" placeholder="0" oninput="updateSysTotal()"></div>
+    </div>
+    <div class="budget-row">
+      <span class="budget-label">Lighting</span>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="sys_lighting" min="0" max="100" step="1" placeholder="0" oninput="updateSysTotal()"></div>
+    </div>
+    <div class="budget-row">
+      <span class="budget-label">Other electrical</span>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="sys_electrical" min="0" max="100" step="1" placeholder="0" oninput="updateSysTotal()"></div>
+    </div>
+    <div class="budget-row">
+      <span class="budget-label">Enclosure</span>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="sys_enclosure" min="0" max="100" step="1" placeholder="0" oninput="updateSysTotal()"></div>
+    </div>
+    <div class="budget-row">
+      <span class="budget-label">Other systems</span>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="sys_other" min="0" max="100" step="1" placeholder="0" oninput="updateSysTotal()"></div>
+    </div>
+    <div class="budget-total-bar">
+      <div>
+        <div class="budget-total-label">Total allocated</div>
+        <div class="budget-total-hint" id="sysTotalHint"></div>
+      </div>
+      <div class="track-wrap"><div class="track-fill" id="sysTrack" style="width:0%"></div></div>
+      <div class="budget-total-value" id="sysTotalVal">0%</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">HVAC finding types — what % of your HVAC findings fall into each category? (must sum to 100%)</div>
+    <div id="hvacFindingRows"></div>
+    <div class="budget-total-bar">
+      <div>
+        <div class="budget-total-label">Total allocated</div>
+        <div class="budget-total-hint" id="hvacTotalHint"></div>
+      </div>
+      <div class="track-wrap"><div class="track-fill" id="hvacTrack" style="width:0%"></div></div>
+      <div class="budget-total-value" id="hvacTotalVal">0%</div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goStep('step-7')">← Back</button>
+    <button class="btn btn-primary" id="btn8next" onclick="goNext(8)" disabled>Continue →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     STEP 9 — Final questions
+══════════════════════════════════════════════════════ -->
+<div class="step" id="step-9">
+  <div class="step-eyebrow">Section 9 of 9</div>
+  <div class="step-title">Final questions</div>
+  <div class="step-desc">A few quick questions about contract documents, industry resources, and emerging practices.</div>
+
+  <div class="card">
+    <div class="card-title">Contract documents</div>
+    <div class="field">
+      <label>How often do EBCx contract documents provide adequate detail on work scope and required deliverables? <span class="req">*</span></label>
+      <div class="likert-wrap" id="likert_contracts">
+        <div class="likert-opt"><input type="radio" name="contracts" id="c0" value="0"><label for="c0">Never</label></div>
+        <div class="likert-opt"><input type="radio" name="contracts" id="c1" value="0.1"><label for="c1">Rarely</label></div>
+        <div class="likert-opt"><input type="radio" name="contracts" id="c2" value="0.25"><label for="c2">Sometimes</label></div>
+        <div class="likert-opt"><input type="radio" name="contracts" id="c3" value="0.5"><label for="c3">Often</label></div>
+        <div class="likert-opt"><input type="radio" name="contracts" id="c4" value="0.75"><label for="c4">Usually</label></div>
+        <div class="likert-opt"><input type="radio" name="contracts" id="c5" value="1"><label for="c5">Always</label></div>
+      </div>
+      <div class="field-error" id="err_contracts">Please select a response.</div>
+    </div>
+    <div class="field">
+      <label>What is the most desirable improvement to EBCx contract documents?</label>
+      <textarea id="q_improvement" rows="3" placeholder="Share your thoughts…"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Industry programs</div>
+    <div class="field">
+      <label>What % of your EBCx projects over the last 3 years were supported by utility incentive programs? <span class="req">*</span></label>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="q_utility" min="0" max="100" step="1" placeholder="0"></div>
+      <div class="field-error" id="err_utility">Please enter a value between 0 and 100.</div>
+    </div>
+    <div class="field">
+      <label>What % pursued LEED O+M or other facility certifications? <span class="req">*</span></label>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="q_leed" min="0" max="100" step="1" placeholder="0"></div>
+      <div class="field-error" id="err_leed">Please enter a value between 0 and 100.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Emerging practices</div>
+    <div class="field">
+      <label>What % of your EBCx work is currently aided by AI tools? <span class="req">*</span></label>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="q_ai" min="0" max="100" step="1" placeholder="0"></div>
+      <div class="field-error" id="err_ai">Please enter a value between 0 and 100.</div>
+    </div>
+    <div class="field">
+      <label>What BCxA resources would most benefit members performing EBCx?</label>
+      <textarea id="q_resources" rows="3" placeholder="Share your thoughts…"></textarea>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn btn-ghost" onclick="goBack9()">← Back</button>
+    <button class="btn btn-success" onclick="submitSurvey()">Submit survey ✓</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     SUCCESS
+══════════════════════════════════════════════════════ -->
+<div class="step" id="step-done">
+  <div class="success-screen">
+    <div class="success-icon">✓</div>
+    <div class="success-title">Thank you for your response</div>
+    <div class="success-desc">Your submission has been recorded. Results from all respondents will inform ESTCP project EW23-8362 on developing improved EBCx scope guidance for the DoD UESC program.</div>
+    <p style="font-size:13px;color:var(--gray-500)">You may close this window.</p>
+  </div>
+</div>
+
+</div><!-- /survey-body -->
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   DATA DEFINITIONS
+═══════════════════════════════════════════════════════════ */
+const PHASES = [
+  { id:'planning',       label:'Planning phase' },
+  { id:'assessment',     label:'Initial assessment phase' },
+  { id:'investigation',  label:'Investigation and documentation phase' },
+  { id:'implementation', label:'Implementation phase' },
+  { id:'handoff',        label:'Hand-off phase' },
+  { id:'other',          label:'Other activities' },
+];
+
+const TASKS = {
+  planning: [
+    'Respond to EBCx RFP/RFQ and develop EBCx contract',
+    'Screen the building for EBCx viability',
+    "Define the Owner's EBCx goals and objectives",
+    'Confirm/update the scope of work, schedule, and budget',
+    'Conduct cursory walk-through to identify general conditions',
+    'Ascertain/examine/develop a Current Facility Requirements (CFR)',
+    'Develop Initial EBCx Plan',
+    'Define roles and responsibilities of EBCx team',
+    'Select the initial EBCx team',
+    'Conduct meetings with owner and other stakeholders',
+  ],
+  assessment: [
+    'Review building documentation',
+    'Analyze energy data (billing)',
+    'Analyze energy data (interval)',
+    'Benchmark facility in ESPM or other tool',
+    'Perform initial facility staff interviews',
+    'Perform building occupant interviews',
+    'Perform initial site walk-through',
+    'Perform initial BAS review',
+    'Develop system diagrams',
+    'Develop computer simulations of facility',
+    'Develop master list of findings',
+    'Develop an Initial Assessment EBCx Report',
+  ],
+  investigation: [
+    'Check calibrations of BAS trended points',
+    'Analyze facility/system performance and establish performance baseline',
+    'Develop functional test procedures',
+    'Conduct system functional testing and evaluate results',
+    'Develop monitoring/M&V plan',
+    'Conduct trend data analysis',
+    'Review of control sequences',
+    'Energy savings calculations',
+    'Perform financial return calculations',
+    'Perform simple repairs',
+    'Prepare implementation plan',
+    'Complete scope of work for implementation and hand-off phases',
+    'Obtain owner acceptance and decision to proceed',
+  ],
+  implementation: [
+    'Implement and verify successful implementation of EMCs and FIMs',
+    'Review retrofit design documents',
+    'Adjust energy savings estimates and measure costs',
+    'Execute M&V plan and metering',
+    'Balance and document revised systems',
+    'Update EBCx documentation and prepare implementation phase summary report',
+    'Plan for ongoing commissioning if in scope',
+    'Obtain owner acceptance and written decision to proceed',
+  ],
+  handoff: [
+    'Write final report',
+    'Produce training materials',
+    'Document new schedules, setpoints, and control sequences',
+    'Document control logic diagrams',
+    'Document O&M procedures',
+    'Train staff and end users',
+    'Document a persistence strategy',
+    'Close out project',
+  ],
+};
+
+const HVAC_FINDINGS = [
+  'Equipment installation concerns',
+  'Implement advanced controls including resets',
+  'Loop tuning',
+  'Modify sequence of operation / controls programming',
+  'Scheduling',
+  'Maintenance (other)',
+  'Operation and control (other)',
+  'Modify control setpoints',
+  'Sensor calibration / settings',
+  'Mechanical fix / equipment repair',
+  'Other HVAC finding type',
+];
+
+/* ═══════════════════════════════════════════════════════════
+   GOOGLE FORM CONFIGURATION
+   Replace entry IDs with your actual Google Form entry IDs.
+   See setup guide at the bottom of this file.
+═══════════════════════════════════════════════════════════ */
+const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSd5NEF6ovcHiL2z8gFbx0TScrMadRWQHp6m0j47TT2q9memmg/formResponse';
+
+const ENTRY = {
+  chapter:      'entry.631994451',
+  revenue:      'entry.2061262925',
+  officesize:   'entry.697098297',
+  ebcx_rev:     'entry.293002615',
+  experience:   'entry.1676806541',
+  // Phase totals
+  ph_planning:      'entry.1316488481',
+  ph_assessment:    'entry.1049645647',
+  ph_investigation: 'entry.749097547',
+  ph_implementation:'entry.1019673431',
+  ph_handoff:       'entry.849929473',
+  ph_other:         'entry.65525898',
+  // System allocation
+  sys_hvac:        'entry.1900015614',
+  sys_lighting:    'entry.2105060067',
+  sys_electrical:  'entry.1998826663',
+  sys_enclosure:   'entry.1376682910',
+  sys_other:       'entry.1660283762',
+  // Final questions
+  contracts:    'entry.1435782393',
+  improvement:  'entry.822611473',
+  utility:      'entry.927818831',
+  leed:         'entry.992286492',
+  ai:           'entry.661868147',
+  resources:    'entry.1941673413',
+  // Task and HVAC finding entries will be added as JSON blobs
+  tasks_json:   'entry.648717726',
+  findings_json:'entry.658382210',
+};
+
+/* ═══════════════════════════════════════════════════════════
+   BUILD DYNAMIC SECTIONS
+═══════════════════════════════════════════════════════════ */
+function buildPhaseRows() {
+  const container = document.getElementById('phaseRows');
+  PHASES.forEach(ph => {
+    const row = document.createElement('div');
+    row.className = 'budget-row';
+    row.innerHTML = `
+      <span class="budget-label phase-label">${ph.label}</span>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="ph_${ph.id}" min="0" max="100" step="1" placeholder="0" oninput="updatePhaseTotal()"></div>`;
+    container.appendChild(row);
+  });
+}
+
+function buildTaskCard(phaseId, containerId) {
+  const container = document.getElementById(containerId);
+  const tasks = TASKS[phaseId];
+  container.innerHTML = `<div class="card-title">${phaseId.charAt(0).toUpperCase()+phaseId.slice(1)} tasks — % of phase budget</div>
+    <div class="budget-header"><span>Task</span><span>% of phase</span><span style="color:transparent">x</span></div>`;
+  tasks.forEach((task, i) => {
+    const row = document.createElement('div');
+    row.className = 'budget-row';
+    row.innerHTML = `
+      <span class="budget-label">${task}</span>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="task_${phaseId}_${i}" min="0" max="100" step="1" placeholder="0" oninput="updateTaskTotal('${phaseId}')"></div>`;
+    container.appendChild(row);
+  });
+  const totalBar = document.createElement('div');
+  totalBar.className = 'budget-total-bar';
+  totalBar.innerHTML = `
+    <div>
+      <div class="budget-total-label">Total allocated</div>
+      <div class="budget-total-hint" id="taskHint_${phaseId}"></div>
+    </div>
+    <div class="track-wrap"><div class="track-fill" id="taskTrack_${phaseId}" style="width:0%"></div></div>
+    <div class="budget-total-value" id="taskTotal_${phaseId}">0%</div>`;
+  container.appendChild(totalBar);
+}
+
+function buildHvacFindings() {
+  const container = document.getElementById('hvacFindingRows');
+  HVAC_FINDINGS.forEach((f, i) => {
+    const row = document.createElement('div');
+    row.className = 'finding-row';
+    row.innerHTML = `
+      <span class="budget-label">${f}</span>
+      <div class="pct-wrap"><input type="number" class="pct-input" id="hvac_${i}" min="0" max="100" step="1" placeholder="0" oninput="updateHvacTotal()"></div>`;
+    container.appendChild(row);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   TOTAL UPDATERS
+═══════════════════════════════════════════════════════════ */
+function sumInputs(ids) {
+  return ids.reduce((s, id) => {
+    const v = parseFloat(document.getElementById(id)?.value) || 0;
+    return s + v;
+  }, 0);
+}
+
+function applyTotalStyle(total, valEl, trackEl, hintEl, btnId) {
+  const pct = Math.min(total, 100);
+  trackEl.style.width = pct + '%';
+  valEl.textContent = total.toFixed(0) + '%';
+  const isOk = total === 100;
+  const isOver = total > 100;
+  valEl.className = 'budget-total-value ' + (isOk ? 'ok' : isOver ? 'over' : 'warn');
+  trackEl.style.background = isOk ? '#1D9E75' : isOver ? '#C0392B' : '#BA7517';
+  if (hintEl) {
+    hintEl.className = 'budget-total-hint visible ' + (isOk ? 'ok' : isOver ? 'over' : 'warn');
+    hintEl.textContent = isOk ? '✓ Totals 100% — ready to continue'
+      : isOver ? `Over by ${(total-100).toFixed(0)}% — please reduce`
+      : `${(100-total).toFixed(0)}% remaining`;
+  }
+  if (btnId) document.getElementById(btnId).disabled = !isOk;
+}
+
+function updatePhaseTotal() {
+  const ids = PHASES.map(ph => 'ph_' + ph.id);
+  const total = sumInputs(ids);
+  applyTotalStyle(total,
+    document.getElementById('phaseTotalVal'),
+    document.getElementById('phaseTrack'),
+    document.getElementById('phaseTotalHint'),
+    'btn2next');
+}
+
+function updateTaskTotal(phaseId) {
+  const tasks = TASKS[phaseId];
+  const ids = tasks.map((_, i) => `task_${phaseId}_${i}`);
+  const total = sumInputs(ids);
+  const stepMap = { planning:'btn3next', assessment:'btn4next', investigation:'btn5next', implementation:'btn6next', handoff:'btn7next' };
+  applyTotalStyle(total,
+    document.getElementById(`taskTotal_${phaseId}`),
+    document.getElementById(`taskTrack_${phaseId}`),
+    document.getElementById(`taskHint_${phaseId}`),
+    stepMap[phaseId]);
+}
+
+function updateSysTotal() {
+  const ids = ['sys_hvac','sys_lighting','sys_electrical','sys_enclosure','sys_other'];
+  const total = sumInputs(ids);
+  applyTotalStyle(total,
+    document.getElementById('sysTotalVal'),
+    document.getElementById('sysTrack'),
+    document.getElementById('sysTotalHint'),
+    null);
+  checkStep8();
+}
+
+function updateHvacTotal() {
+  const ids = HVAC_FINDINGS.map((_, i) => `hvac_${i}`);
+  const total = sumInputs(ids);
+  applyTotalStyle(total,
+    document.getElementById('hvacTotalVal'),
+    document.getElementById('hvacTrack'),
+    document.getElementById('hvacTotalHint'),
+    null);
+  checkStep8();
+}
+
+function checkStep8() {
+  const sysIds = ['sys_hvac','sys_lighting','sys_electrical','sys_enclosure','sys_other'];
+  const hvacIds = HVAC_FINDINGS.map((_, i) => `hvac_${i}`);
+  const ok = sumInputs(sysIds) === 100 && sumInputs(hvacIds) === 100;
+  document.getElementById('btn8next').disabled = !ok;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════════════ */
+const STEP_ORDER = ['step-1','step-2','step-3','step-4','step-5','step-6','step-7','step-8','step-9','step-done'];
+let currentStep = 'step-1';
+
+function goStep(id) {
+  document.getElementById(currentStep).classList.remove('active');
+  document.getElementById(id).classList.add('active');
+  currentStep = id;
+  updateProgress();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function updateProgress() {
+  const idx = STEP_ORDER.indexOf(currentStep);
+  const total = STEP_ORDER.length - 1;
+  const pct = Math.round((idx / total) * 100);
+  document.getElementById('progressFill').style.width = pct + '%';
+  const display = idx + 1;
+  document.getElementById('progressLabel').textContent = `Step ${display} of ${total}`;
+}
+
+function goNext(stepNum) {
+  // Step 1 — check experience
+  if (stepNum === 1) {
+    if (!validateStep1()) return;
+    const exp = document.getElementById('q_experience').value;
+    goStep(exp === 'no' ? 'step-1b' : 'step-2');
+    return;
+  }
+  if (stepNum === 2) { goStep('step-3'); return; }
+  if (stepNum === 3) { goStep('step-4'); return; }
+  if (stepNum === 4) { goStep('step-5'); return; }
+  if (stepNum === 5) { goStep('step-6'); return; }
+  if (stepNum === 6) { goStep('step-7'); return; }
+  if (stepNum === 7) { goStep('step-8'); return; }
+  if (stepNum === 8) { goStep('step-9'); return; }
+}
+
+function goBack9() {
+  const exp = document.getElementById('q_experience').value;
+  goStep(exp === 'no' ? 'step-1b' : 'step-8');
+}
+
+/* ═══════════════════════════════════════════════════════════
+   VALIDATION
+═══════════════════════════════════════════════════════════ */
+function showErr(id, show) {
+  const el = document.getElementById(id);
+  if (el) el.classList.toggle('visible', show);
+  const inputId = id.replace('err_', 'q_');
+  const inp = document.getElementById(inputId);
+  if (inp) inp.classList.toggle('error', show);
+}
+
+function validateStep1() {
+  let ok = true;
+  const chapter = document.getElementById('q_chapter').value;
+  showErr('err_chapter', !chapter);
+  if (!chapter) ok = false;
+
+  const revenue = document.getElementById('q_revenue').value;
+  showErr('err_revenue', !revenue);
+  if (!revenue) ok = false;
+
+  const size = document.getElementById('q_officesize').value;
+  const sizeOk = size !== '' && +size >= 0 && +size <= 500;
+  showErr('err_officesize', !sizeOk);
+  if (!sizeOk) ok = false;
+
+  const rev = document.getElementById('q_ebcx_rev').value;
+  const revOk = rev !== '' && +rev >= 0 && +rev <= 100;
+  showErr('err_ebcx_rev', !revOk);
+  if (!revOk) ok = false;
+
+  const exp = document.getElementById('q_experience').value;
+  showErr('err_experience', !exp);
+  if (!exp) ok = false;
+
+  return ok;
+}
+
+function validateStep9() {
+  let ok = true;
+  const contracts = document.querySelector('input[name="contracts"]:checked');
+  showErr('err_contracts', !contracts);
+  if (!contracts) ok = false;
+
+  const utility = document.getElementById('q_utility').value;
+  const uOk = utility !== '' && +utility >= 0 && +utility <= 100;
+  showErr('err_utility', !uOk);
+  if (!uOk) ok = false;
+
+  const leed = document.getElementById('q_leed').value;
+  const lOk = leed !== '' && +leed >= 0 && +leed <= 100;
+  showErr('err_leed', !lOk);
+  if (!lOk) ok = false;
+
+  const ai = document.getElementById('q_ai').value;
+  const aOk = ai !== '' && +ai >= 0 && +ai <= 100;
+  showErr('err_ai', !aOk);
+  if (!aOk) ok = false;
+
+  return ok;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SUBMIT
+═══════════════════════════════════════════════════════════ */
+function collectData() {
+  const tasks = {};
+  Object.keys(TASKS).forEach(phaseId => {
+    tasks[phaseId] = TASKS[phaseId].map((label, i) => ({
+      label,
+      pct: parseFloat(document.getElementById(`task_${phaseId}_${i}`)?.value) || 0
+    }));
+  });
+
+  const findings = HVAC_FINDINGS.map((label, i) => ({
+    label,
+    pct: parseFloat(document.getElementById(`hvac_${i}`)?.value) || 0
+  }));
+
+  return { tasks, findings };
+}
+
+function submitSurvey() {
+  if (!validateStep9()) return;
+
+  const { tasks, findings } = collectData();
+  const contracts = document.querySelector('input[name="contracts"]:checked');
+
+  const params = new URLSearchParams();
+  params.append(ENTRY.chapter,      document.getElementById('q_chapter').value);
+  params.append(ENTRY.revenue,      document.getElementById('q_revenue').value);
+  params.append(ENTRY.officesize,   document.getElementById('q_officesize').value);
+  params.append(ENTRY.ebcx_rev,     document.getElementById('q_ebcx_rev').value);
+  params.append(ENTRY.experience,   document.getElementById('q_experience').value);
+
+  PHASES.forEach(ph => {
+    params.append(ENTRY['ph_' + ph.id], document.getElementById('ph_' + ph.id)?.value || '0');
+  });
+
+  params.append(ENTRY.sys_hvac,       document.getElementById('sys_hvac').value || '0');
+  params.append(ENTRY.sys_lighting,   document.getElementById('sys_lighting').value || '0');
+  params.append(ENTRY.sys_electrical, document.getElementById('sys_electrical').value || '0');
+  params.append(ENTRY.sys_enclosure,  document.getElementById('sys_enclosure').value || '0');
+  params.append(ENTRY.sys_other,      document.getElementById('sys_other').value || '0');
+
+  params.append(ENTRY.contracts,   contracts ? contracts.value : '');
+  params.append(ENTRY.improvement, document.getElementById('q_improvement').value);
+  params.append(ENTRY.utility,     document.getElementById('q_utility').value);
+  params.append(ENTRY.leed,        document.getElementById('q_leed').value);
+  params.append(ENTRY.ai,          document.getElementById('q_ai').value);
+  params.append(ENTRY.resources,   document.getElementById('q_resources').value);
+  params.append(ENTRY.tasks_json,   JSON.stringify(tasks));
+  params.append(ENTRY.findings_json, JSON.stringify(findings));
+
+  if (!FORM_ACTION || FORM_ACTION === 'YOUR_GOOGLE_FORM_ACTION_URL') {
+    alert('Google Form is not configured yet.');
+    return;
+  }
+
+  fetch(FORM_ACTION, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: params.toString()
+  }).then(() => {
+    goStep('step-done');
+  }).catch(() => {
+    goStep('step-done');
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════════════ */
+buildPhaseRows();
+buildTaskCard('planning', 'tasks-planning');
+buildTaskCard('assessment', 'tasks-assessment');
+buildTaskCard('investigation', 'tasks-investigation');
+buildTaskCard('implementation', 'tasks-implementation');
+buildTaskCard('handoff', 'tasks-handoff');
+buildHvacFindings();
+updateProgress();
+</script>
+
+<!--
+═══════════════════════════════════════════════════════════════
+GOOGLE FORM SETUP GUIDE
+═══════════════════════════════════════════════════════════════
+
+1. Go to forms.google.com and create a new blank form.
+
+2. Create SHORT ANSWER questions for each field below.
+   (Do NOT use required validation on the Google Form side —
+   validation is handled by this wizard.)
+
+   Field name               → Suggested question text
+   ─────────────────────────────────────────────────────
+   chapter                  → BCxA Chapter
+   revenue                  → Annual Revenue
+   officesize               → Office Size
+   ebcx_rev                 → EBCx Revenue Share
+   experience               → EBCx Experience
+   ph_planning              → Phase: Planning %
+   ph_assessment            → Phase: Initial Assessment %
+   ph_investigation         → Phase: Investigation %
+   ph_implementation        → Phase: Implementation %
+   ph_handoff               → Phase: Hand-off %
+   ph_other                 → Phase: Other Activities %
+   sys_hvac                 → System: HVAC %
+   sys_lighting             → System: Lighting %
+   sys_electrical           → System: Other Electrical %
+   sys_enclosure            → System: Enclosure %
+   sys_other                → System: Other Systems %
+   contracts                → Contract Doc Adequacy
+   improvement              → Contract Improvement (open)
+   utility                  → Utility Incentive %
+   leed                     → LEED Cert %
+   ai                       → AI Usage %
+   resources                → BCxA Resources (open)
+   tasks_json               → Tasks JSON
+   findings_json            → Findings JSON
+
+3. Get the form's action URL:
+   - Click the ⋮ menu → "Get pre-filled link"
+   - Fill in dummy values and click "Get Link"
+   - In the URL, replace everything after "/viewform" with "/formResponse"
+   - That's your FORM_ACTION URL
+
+4. Get each entry ID:
+   - Right-click the pre-filled URL link → Inspect
+   - Search for "entry." in the page source
+   - Each question has an entry.XXXXXXXXX ID
+   - Map each ID to the corresponding ENTRY constant above
+
+5. Replace in this file:
+   - FORM_ACTION = 'https://docs.google.com/forms/d/YOUR_ID/formResponse'
+   - Update each ENTRY.xxx = 'entry.ACTUAL_ID'
+
+6. Remove or hide the yellow setup note div (id="setupNote")
+
+7. Host the file anywhere — GitHub Pages, a shared drive,
+   or email as an attachment. It works offline too (submissions
+   queue and send when online if you add a service worker,
+   but for this use case email delivery is simplest).
+
+The Google Sheet linked to the form will auto-populate one
+row per submission. The tasks_json and findings_json columns
+hold structured JSON that can be parsed with a short Python
+script for aggregation and analysis.
+═══════════════════════════════════════════════════════════════
+-->
+</body>
+</html>
