@@ -230,7 +230,17 @@ select.err,input.err{border-color:var(--red)}
 <div class="tab-content active" id="tab0">
 <div class="page">
   <div class="instr-hero">
-    <h1>2026 BCxA Existing Building Commissioning (EBCx) Market Survey</h1>
+    <div style="display:flex;align-items:flex-start;gap:1.5rem;margin-bottom:.75rem">
+      <div style="flex-shrink:0;width:72px;height:72px;background:white;border-radius:14px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,.15)">
+        <svg viewBox="0 0 120 100" width="58" height="48" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="58" cy="50" rx="52" ry="34" fill="none" stroke="#E07820" stroke-width="7" transform="rotate(-18,58,50)"/>
+          <text x="14" y="66" font-family="Georgia,serif" font-size="46" font-weight="700" fill="#1a1a1a" letter-spacing="-1">BC</text>
+          <text x="76" y="66" font-family="Georgia,serif" font-size="46" font-weight="700" fill="#1a1a1a">A</text>
+          <text x="67" y="72" font-family="Georgia,serif" font-size="28" font-weight="700" fill="#E07820" transform="rotate(-8,76,60)">x</text>
+        </svg>
+      </div>
+      <h1 style="margin:0;padding-top:8px">2026 BCxA Existing Building Commissioning (EBCx) Market Survey</h1>
+    </div>
     <p style="font-size:12px;color:rgba(255,255,255,.6);margin-bottom:.9rem">Fields marked <span style="color:#FFD966;font-weight:700">*</span> are required.</p>
     <p>The purpose of this market survey is to determine how the building commissioning industry approaches EBCx projects. We recognize that not all EBCx projects are the same and that the work scope will vary by Cx provider and project. We hope to have a representative from each branch office complete this survey and identify the tasks you address as part of an average EBCx project.</p>
     <p>For example, if a specific task requires 5% of a typical project budget but is only included in the work scope for 20% of your office's projects, then that task would represent 1% of the budget for an average EBCx project. <strong style="color:#fff">While the percentage of total budget dedicated to each task is important, the most valuable distinctions we expect to make are identifying tasks that Cx providers do not include in their EBCx work — those requiring 0% of their project budgets.</strong></p>
@@ -597,7 +607,7 @@ const TASKS = {
     'Other (please specify)','Other (please specify)',
   ],
   implementation:[
-    'Implement and verify successful implementation of EMCs and FIMs.',
+    'Implement and verify successful implementation of ECMs and FIMs.',
     'Review retrofit design documents.',
     'Adjust energy savings estimates and measure costs.',
     'Execute measurement and verification plan and metering.',
@@ -668,6 +678,7 @@ const ACRONYMS = [
   ['CFR','Current Facility Requirements'],['Cx','Commissioning'],
   ['EBCx','Existing Building Commissioning'],['ECM','Energy Conservation Measure'],
   ['ESPM','Energy Star Portfolio Manager'],['FIM','Facility Improvement Measure'],
+  ['HVAC','Heating, Ventilation, and Air Conditioning'],
   ['LEED','Leadership in Energy and Environmental Design'],
   ['O&M / O+M','Operations and Maintenance'],['RFP','Request for Proposals'],
   ['RFQ','Request for Qualifications'],['USGBC','US Green Building Council'],
@@ -697,8 +708,8 @@ function updateProgress(){
   const wsOk = Math.abs(phaseTotal()-100)<0.01 && Math.abs(updateGrandProjectTotalVal()-100)<0.01;
   const wsPct = wsOk ? 40 : 0;
   let grandFind=0;
-  SYSTEMS.forEach(sys=>{ const sp=parseFloat(document.getElementById('sys_'+sys.id)?.value)||0; sys.findings.forEach((_,i)=>{ const v=parseFloat(document.getElementById(`find_${sys.id}_${i}`)?.value)||0; grandFind+=sp*v/100; }); });
-  const findOk = Math.abs(sysTotal()-100)<0.01 && Math.abs(grandFind-100)<0.01;
+  SYSTEMS.forEach(sys=>{ const sp=parseFloat(document.getElementById('sysfind_'+sys.id)?.value)||0; sys.findings.forEach((_,i)=>{ const v=parseFloat(document.getElementById(`find_${sys.id}_${i}`)?.value)||0; grandFind+=sp*v/100; }); });
+  const findOk = Math.abs(sysTotal()-100)<0.01 && Math.abs(sysFindTotal()-100)<0.01 && Math.abs(grandFind-100)<0.01;
   const findPct = findOk ? 40 : 0;
   const total = infoDone + wsPct + findPct;
   document.getElementById('progFill').style.width = total+'%';
@@ -825,30 +836,36 @@ function togglePhase(id){
 function buildFindings(){
   const container = document.getElementById('findingSystems');
 
-  // ── Step 1: system scope allocation table ──────────────────────────────────
+  // ── Step 1: dual-column system allocation ─────────────────────────────────
   const step1 = document.createElement('div');
   step1.className = 'card';
   step1.innerHTML = `
-    <div class="card-title">Step 1 — Investigation scope by system (must total 100%)
-      <span class="tip-wrap" style="margin-left:8px;font-weight:400">
-        <span class="tip-icon" tabindex="0">?</span>
-        <span class="tooltip">Estimate the percentage of the combined Assessment and Investigation phase budget dedicated to investigating each building system for a typical EBCx project. Adjust these percentages until the total equals 100%.</span>
+    <div class="card-title">Step 1 — Consider where time and budget are consumed on a project on the various systems and where findings are uncovered.</div>
+    <div style="display:grid;grid-template-columns:1fr 130px 130px;gap:6px;padding-bottom:6px;border-bottom:1px solid var(--gray-100);margin-bottom:4px;align-items:end">
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400)">System</span>
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400);text-align:center;line-height:1.3">
+        <span class="tip-wrap" style="justify-content:center">Estimated % of project budget<span class="tip-icon" tabindex="0">?</span><span class="tooltip" style="width:260px">What % of the combined Assessment and Investigation phase budget is dedicated to this system? Must total 100%.</span></span>
+      </span>
+      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400);text-align:center;line-height:1.3">
+        <span class="tip-wrap" style="justify-content:center">Estimated % of total findings<span class="tip-icon" tabindex="0">?</span><span class="tooltip" style="width:260px">What % of total findings across all systems are attributed to this system? Must total 100%. Compare to the budget column to identify where effort and findings diverge.</span></span>
       </span>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 90px;gap:6px;padding-bottom:6px;border-bottom:1px solid var(--gray-100);margin-bottom:4px">
-      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400)">System</span>
-      <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400);text-align:right">% of scope</span>
-    </div>
     ${SYSTEMS.map(sys=>`
-      <div style="display:grid;grid-template-columns:1fr 90px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--gray-50)">
+      <div style="display:grid;grid-template-columns:1fr 130px 130px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--gray-50)">
         <span class="bud-phase-label">${sys.label}</span>
-        <div class="pct-wrap"><input type="number" class="pct-inp" id="sys_${sys.id}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onSysInput()"></div>
+        <div style="display:flex;justify-content:center"><div class="pct-wrap"><input type="number" class="pct-inp" id="sys_${sys.id}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onSysInput()"></div></div>
+        <div style="display:flex;justify-content:center"><div class="pct-wrap"><input type="number" class="pct-inp" id="sysfind_${sys.id}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onSysFindInput()"></div></div>
       </div>`).join('')}
-    <div class="tot-bar" style="margin-top:10px">
-      <span class="tot-bar-label">System scope total</span>
-      <div class="tot-track"><div class="tot-fill" id="sysTotFill" style="width:0%"></div></div>
-      <span class="tot-hint" id="sysTotHint"></span>
-      <span class="tot-val" id="sysTotVal">0%</span>
+    <div style="display:grid;grid-template-columns:1fr 130px 130px;gap:6px;margin-top:10px;align-items:center">
+      <span style="font-size:12px;font-weight:600;color:var(--gray-600)">Totals</span>
+      <div class="tot-bar" style="margin:0">
+        <div class="tot-track"><div class="tot-fill" id="sysTotFill" style="width:0%"></div></div>
+        <span class="tot-val" id="sysTotVal" style="font-size:12px;width:40px">0%</span>
+      </div>
+      <div class="tot-bar" style="margin:0">
+        <div class="tot-track"><div class="tot-fill" id="sysFindTotFill" style="width:0%"></div></div>
+        <span class="tot-val" id="sysFindTotVal" style="font-size:12px;width:40px">0%</span>
+      </div>
     </div>`;
   container.appendChild(step1);
 
@@ -882,7 +899,7 @@ function buildFindings(){
         <span class="phase-name">
           ${sys.label}
           <span id="sysbig_${sys.id}" style="margin-left:8px;font-size:13px;font-weight:700;color:var(--gray-400)">—</span>
-          <span style="font-size:11px;font-weight:400;color:var(--gray-400)"> of scope</span>
+          <span style="font-size:11px;font-weight:400;color:var(--gray-400)"> of findings</span>
         </span>
         <div class="phase-pct-wrap">
           <span class="phase-badge" id="sysbadge_${sys.id}">system total: 0%</span>
@@ -940,6 +957,7 @@ function phaseTotal(){ return sumInputs(PHASES.map(ph=>'ph_'+ph.id)); }
 function taskGrandTotal(){ return PHASES.reduce((s,ph)=>s+phasTaskSum(ph.id),0); }
 function phasTaskSum(id){ return sumInputs(TASKS[id].map((_,i)=>`task_${id}_${i}`)); }
 function sysTotal(){ return sumInputs(SYSTEMS.map(s=>'sys_'+s.id)); }
+function sysFindTotal(){ return sumInputs(SYSTEMS.map(s=>'sysfind_'+s.id)); }
 function findTotal(){ return SYSTEMS.reduce((s,sys)=>s+sysTaskSum(sys.id),0); }
 function sysTaskSum(id){ return sumInputs(SYSTEMS.find(s=>s.id===id).findings.map((_,i)=>`find_${id}_${i}`)); }
 
@@ -1018,12 +1036,25 @@ function updateGrandProjectTotalVal(){
 }
 
 function onSysInput(){
-  applyTotStyle(sysTotal(),'sysTotFill','sysTotHint','sysTotVal');
-  // recalc all project % cells and col totals for every system (sys% changed)
+  // budget col total
+  const tot=sysTotal();
+  const fill=document.getElementById('sysTotFill'), val=document.getElementById('sysTotVal');
+  if(fill){ fill.style.width=Math.min(tot,100)+'%'; fill.className='tot-fill '+(Math.abs(tot-100)<0.05?'bg-ok':tot>100?'bg-over':'bg-warn'); }
+  if(val){ val.textContent=tot.toFixed(1)+'%'; val.className='tot-val '+(Math.abs(tot-100)<0.05?'c-ok':tot>100?'c-over':'c-warn'); }
+  updateProgress();
+}
+
+function onSysFindInput(){
+  // findings col total
+  const tot=sysFindTotal();
+  const fill=document.getElementById('sysFindTotFill'), val=document.getElementById('sysFindTotVal');
+  if(fill){ fill.style.width=Math.min(tot,100)+'%'; fill.className='tot-fill '+(Math.abs(tot-100)<0.05?'bg-ok':tot>100?'bg-over':'bg-warn'); }
+  if(val){ val.textContent=tot.toFixed(1)+'%'; val.className='tot-val '+(Math.abs(tot-100)<0.05?'c-ok':tot>100?'c-over':'c-warn'); }
+  // update accordion headers (sysbig_ shows sysfind value)
   SYSTEMS.forEach(sys=>{
-    const sysPct=parseFloat(document.getElementById('sys_'+sys.id)?.value)||0;
+    const sysFindPct=parseFloat(document.getElementById('sysfind_'+sys.id)?.value)||0;
     const big=document.getElementById('sysbig_'+sys.id);
-    if(big){ big.textContent=sysPct.toFixed(1)+'%'; big.style.color=sysPct>0?'var(--navy)':'var(--gray-400)'; }
+    if(big){ big.textContent=sysFindPct.toFixed(1)+'%'; big.style.color=sysFindPct>0?'var(--navy)':'var(--gray-400)'; }
     recalcFindProjectPcts(sys.id);
   });
   updateGrandFindTotal();
@@ -1041,12 +1072,12 @@ function onFindInput(sysId){
 }
 
 function recalcFindProjectPcts(sysId){
-  const sysPct=parseFloat(document.getElementById('sys_'+sysId)?.value)||0;
+  const sysFindPct=parseFloat(document.getElementById('sysfind_'+sysId)?.value)||0;
   const sys=SYSTEMS.find(s=>s.id===sysId);
   let projSum=0;
   sys.findings.forEach((_,i)=>{
     const v=parseFloat(document.getElementById(`find_${sysId}_${i}`)?.value)||0;
-    const proj=sysPct*v/100;
+    const proj=sysFindPct*v/100;
     projSum+=proj;
     const el=document.getElementById(`findproj_${sysId}_${i}`);
     if(el) el.textContent=proj>0?proj.toFixed(2)+'%':'—';
@@ -1069,8 +1100,8 @@ function applyFindTotStyle(sysId, ts){
 function updateGrandFindTotal(){
   let grand=0;
   SYSTEMS.forEach(sys=>{
-    const sysPct=parseFloat(document.getElementById('sys_'+sys.id)?.value)||0;
-    sys.findings.forEach((_,i)=>{ const v=parseFloat(document.getElementById(`find_${sys.id}_${i}`)?.value)||0; grand+=sysPct*v/100; });
+    const sysFindPct=parseFloat(document.getElementById('sysfind_'+sys.id)?.value)||0;
+    sys.findings.forEach((_,i)=>{ const v=parseFloat(document.getElementById(`find_${sys.id}_${i}`)?.value)||0; grand+=sysFindPct*v/100; });
   });
   applyTotStyle(grand,'findTotFill','findTotHint','findTotVal');
 }
@@ -1152,14 +1183,16 @@ function validateAndNext(fromTab){
   }
   if(fromTab===3){
     const sOk = Math.abs(sysTotal()-100)<0.05;
+    const sfOk = Math.abs(sysFindTotal()-100)<0.05;
     const badSys = SYSTEMS.filter(sys=>{ const ts=sysTaskSum(sys.id); return ts>0.01 && Math.abs(ts-100)>=0.05; });
     let grandFind=0;
-    SYSTEMS.forEach(sys=>{ const sp=parseFloat(document.getElementById('sys_'+sys.id)?.value)||0; sys.findings.forEach((_,i)=>{ const v=parseFloat(document.getElementById(`find_${sys.id}_${i}`)?.value)||0; grandFind+=sp*v/100; }); });
+    SYSTEMS.forEach(sys=>{ const sp=parseFloat(document.getElementById('sysfind_'+sys.id)?.value)||0; sys.findings.forEach((_,i)=>{ const v=parseFloat(document.getElementById(`find_${sys.id}_${i}`)?.value)||0; grandFind+=sp*v/100; }); });
     const fOk = Math.abs(grandFind-100)<0.05;
-    if(!sOk || badSys.length>0 || !fOk){
+    if(!sOk || !sfOk || badSys.length>0 || !fOk){
       let msgs=[];
-      if(!sOk) msgs.push(`System scope total is ${sysTotal().toFixed(1)}% — must equal 100%.`);
-      badSys.forEach(sys=>msgs.push(`"${sys.label}" finding total is ${sysTaskSum(sys.id).toFixed(1)}% — must equal 100%.`));
+      if(!sOk) msgs.push(`Budget column total is ${sysTotal().toFixed(1)}% — must equal 100%.`);
+      if(!sfOk) msgs.push(`Findings column total is ${sysFindTotal().toFixed(1)}% — must equal 100%.`);
+      badSys.forEach(sys=>msgs.push(`"${sys.label}" finding type total is ${sysTaskSum(sys.id).toFixed(1)}% — must equal 100%.`));
       if(!fOk) msgs.push(`Grand findings total is ${grandFind.toFixed(1)}% — must equal 100%.`);
       alert(msgs.join('\n'));
       return;
@@ -1258,3 +1291,4 @@ updateProgress();
 </script>
 </body>
 </html>
+
