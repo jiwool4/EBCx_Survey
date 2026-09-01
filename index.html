@@ -1318,13 +1318,8 @@ function submitSurvey(){
     form.appendChild(input);
   }
 
-  // Standard submit value used by Google Forms.
-  const submitInput = document.createElement('input');
-  submitInput.type = 'hidden';
-  submitInput.name = 'submit';
-  submitInput.value = 'Submit';
-  form.appendChild(submitInput);
-
+  // No hidden field named "submit" here: an input with name="submit"
+  // shadows the form.submit() method in the browser.
   document.body.appendChild(form);
   form.submit();
 
