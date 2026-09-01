@@ -685,15 +685,15 @@ const ACRONYMS = [
 ];
 
 /* ═══════ GOOGLE FORM CONFIG ════════════════════════════════════════════════ */
-const FORM_ACTION = 'YOUR_GOOGLE_FORM_ACTION_URL'; // replace before distributing
+const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSeeRd1acFj-E0bbbpNwqQLTc-SoadlFlw_Enlgz1hhqqPqDcA/formResponse';
 const ENTRY = {
-  chapter:'entry.1000001', zip:'entry.1000002', regions:'entry.1000003',
-  years:'entry.1000004', officesize:'entry.1000005', revenue:'entry.1000006',
-  experience:'entry.1000007', ebcx_rev:'entry.1000008', contracts:'entry.1000009',
-  utility:'entry.1000010', leed:'entry.1000011', ai:'entry.1000012',
-  improvement:'entry.1000013', resources:'entry.1000014',
-  phases_json:'entry.1000020', tasks_json:'entry.1000021',
-  systems_json:'entry.1000022', findings_json:'entry.1000023',
+  chapter:'entry.1999316725', zip:'entry.11793302', regions:'entry.1717555704',
+  years:'entry.712552211', officesize:'entry.537735297', revenue:'entry.210414136', // NOTE: years/officesize currently share the supplied entry ID
+  experience:'entry.35705670', ebcx_rev:'entry.236948236', contracts:'entry.650061116',
+  utility:'entry.1177920585', leed:'entry.1579327449', ai:'entry.837704919',
+  improvement:'entry.1622308804', resources:'entry.1185338311',
+  phases_json:'entry.394278896', tasks_json:'entry.1352766337',
+  systems_json:'entry.1331233192', findings_json:'entry.1872717234',
 };
 
 /* ═══════ STATE ═════════════════════════════════════════════════════════════ */
@@ -936,7 +936,7 @@ function buildFindings(){
       const isOther = f.startsWith('Other');
       row.innerHTML = `
         <span style="font-size:12px;color:${isOther?'var(--gray-400)':'var(--gray-900)'};${isOther?'font-style:italic':''}">
-          ${isOther ? `<input type="text" placeholder="Other (specify)" style="height:26px;font-size:12px;font-style:normal;width:100%">` : f}
+          ${isOther ? `<input type="text" id="find_other_${sys.id}_${i}" placeholder="Other (specify)" style="height:26px;font-size:12px;font-style:normal;width:100%">` : f}
         </span>
         <div class="pct-wrap" style="width:100px"><input type="number" style="width:100px!important" class="pct-inp" id="find_${sys.id}_${i}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onFindInput('${sys.id}')"></div>
         <span id="findproj_${sys.id}_${i}" style="text-align:right;font-size:13px;color:var(--gray-500)">—</span>
@@ -1204,29 +1204,80 @@ function validateAndNext(fromTab){
 /* ═══════ SUBMIT ════════════════════════════════════════════════════════════ */
 function collectSubmitData(){
   const phases={};
-  PHASES.forEach(ph=>{phases[ph.id]={label:ph.label,pct:parseFloat(document.getElementById('ph_'+ph.id)?.value)||0};});
+  PHASES.forEach(ph=>{
+    phases[ph.id]={
+      label:ph.label,
+      pct:parseFloat(document.getElementById('ph_'+ph.id)?.value)||0
+    };
+  });
+
   const tasks={};
   PHASES.forEach(ph=>{
-    tasks[ph.id]=TASKS[ph.id].map((t,i)=>({label:t,pct:parseFloat(document.getElementById(`task_${ph.id}_${i}`)?.value)||0,addl:parseFloat(document.getElementById(`addl_${ph.id}_${i}`)?.value)||0}));
+    tasks[ph.id]=TASKS[ph.id].map((t,i)=>{
+      const customLabel=document.getElementById(`task_other_${ph.id}_${i}`)?.value.trim();
+      return {
+        label:customLabel || t,
+        pct:parseFloat(document.getElementById(`task_${ph.id}_${i}`)?.value)||0,
+        addl:parseFloat(document.getElementById(`addl_${ph.id}_${i}`)?.value)||0
+      };
+    });
   });
+
+  // systems_json stores the Step 1 system-level project-budget allocation.
   const systems={};
   SYSTEMS.forEach(sys=>{
-    systems[sys.id]={label:sys.label,scopePct:parseFloat(document.getElementById('sys_'+sys.id)?.value)||0,
-      findings:sys.findings.map((f,i)=>({label:f,pct:parseFloat(document.getElementById(`find_${sys.id}_${i}`)?.value)||0}))};
+    systems[sys.id]={
+      label:sys.label,
+      scopePct:parseFloat(document.getElementById('sys_'+sys.id)?.value)||0
+    };
   });
+
+  // findings_json stores the Step 1 finding allocation plus all Step 2 detail/comments.
+  const findings={};
+  SYSTEMS.forEach(sys=>{
+    findings[sys.id]={
+      label:sys.label,
+      findingsPct:parseFloat(document.getElementById('sysfind_'+sys.id)?.value)||0,
+      findings:sys.findings.map((f,i)=>{
+        const customLabel=document.getElementById(`find_other_${sys.id}_${i}`)?.value.trim();
+        return {
+          label:customLabel || f,
+          pct:parseFloat(document.getElementById(`find_${sys.id}_${i}`)?.value)||0,
+          comment:document.getElementById(`findcomment_${sys.id}_${i}`)?.value.trim()||''
+        };
+      })
+    };
+  });
+
   const regions=Array.from(document.querySelectorAll('input[name=region]:checked')).map(el=>el.value);
-  return {phases,tasks,systems,regions};
+  return {phases,tasks,systems,findings,regions};
+}
+
+function showSubmitted(){
+  document.getElementById('tab3').innerHTML=`<div class="page"><div class="success">
+    <div class="success-icon">✓</div>
+    <div style="font-size:22px;font-weight:600;color:var(--navy);margin-bottom:8px">Thank you for your response</div>
+    <p style="font-size:14px;color:var(--gray-600);max-width:480px;margin:0 auto">Your submission has been sent to the research team.</p>
+  </div></div>`;
+  document.getElementById('progFill').style.width='100%';
+  document.getElementById('progPct').textContent='Submitted ✓';
+  document.getElementById('progText').textContent='Submission complete';
 }
 
 function submitSurvey(){
-  const {phases,tasks,systems,regions}=collectSubmitData();
+  const {phases,tasks,systems,findings,regions}=collectSubmitData();
   const params=new URLSearchParams();
+
   params.append(ENTRY.chapter, document.getElementById('q_chapter').value);
   params.append(ENTRY.zip, document.getElementById('q_zip').value);
   params.append(ENTRY.regions, regions.join(', '));
   params.append(ENTRY.years, document.getElementById('q_years').value);
   params.append(ENTRY.officesize, document.getElementById('q_officesize').value);
   params.append(ENTRY.revenue, document.getElementById('q_revenue').value);
+
+  // Kept as the requested 18th backend field. There is no visible survey input for it.
+  params.append(ENTRY.experience, 'N/A');
+
   params.append(ENTRY.ebcx_rev, document.getElementById('q_ebcx_rev').value);
   params.append(ENTRY.contracts, document.getElementById('q_contracts').value);
   params.append(ENTRY.utility, document.getElementById('q_utility').value||'0');
@@ -1234,25 +1285,24 @@ function submitSurvey(){
   params.append(ENTRY.ai, document.getElementById('q_ai').value||'0');
   params.append(ENTRY.improvement, document.getElementById('q_improvement').value);
   params.append(ENTRY.resources, document.getElementById('q_resources').value);
+
   params.append(ENTRY.phases_json, JSON.stringify(phases));
   params.append(ENTRY.tasks_json, JSON.stringify(tasks));
   params.append(ENTRY.systems_json, JSON.stringify(systems));
+  params.append(ENTRY.findings_json, JSON.stringify(findings));
 
-  if(FORM_ACTION==='YOUR_GOOGLE_FORM_ACTION_URL'){
-    // demo mode
-    document.getElementById('tab3').innerHTML=`<div class="page"><div class="success">
-      <div class="success-icon">✓</div>
-      <div style="font-size:22px;font-weight:600;color:var(--navy);margin-bottom:8px">Thank you for your response</div>
-      <p style="font-size:14px;color:var(--gray-600);max-width:480px;margin:0 auto">Your submission has been recorded. Results will inform ESTCP project EW23-8362 on developing improved EBCx scope guidance for the DoD UESC program.</p>
-    </div></div>`;
-    document.getElementById('progFill').style.width='100%';
-    document.getElementById('progPct').textContent='Submitted ✓';
-    return;
-  }
-
-  fetch(FORM_ACTION,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:params.toString()})
-    .then(()=>{ document.getElementById('tab3').innerHTML=`<div class="page"><div class="success"><div class="success-icon">✓</div><div style="font-size:22px;font-weight:600;color:var(--navy)">Thank you</div></div></div>`; })
-    .catch(()=>{ document.getElementById('tab3').innerHTML=`<div class="page"><div class="success"><div class="success-icon">✓</div><div style="font-size:22px;font-weight:600;color:var(--navy)">Thank you</div></div></div>`; });
+  fetch(FORM_ACTION,{
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'application/x-www-form-urlencoded'},
+    body:params.toString(),
+    keepalive:true
+  })
+    .then(showSubmitted)
+    .catch(err=>{
+      console.error('Google Form submission failed:',err);
+      alert('The survey could not be submitted. Please check your connection and try again.');
+    });
 }
 
 /* ═══════ BUDGET CALCULATOR ═════════════════════════════════════════════════ */
@@ -1291,4 +1341,3 @@ updateProgress();
 </script>
 </body>
 </html>
-
