@@ -1292,18 +1292,48 @@ function submitSurvey(){
   params.append(ENTRY.systems_json, JSON.stringify(systems));
   params.append(ENTRY.findings_json, JSON.stringify(findings));
 
-  fetch(FORM_ACTION,{
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'application/x-www-form-urlencoded'},
-    body:params.toString(),
-    keepalive:true
-  })
-    .then(showSubmitted)
-    .catch(err=>{
-      console.error('Google Form submission failed:',err);
-      alert('The survey could not be submitted. Please check your connection and try again.');
-    });
+  // Submit with a native HTML form rather than fetch/no-cors.
+  // This mirrors a normal browser form POST to Google Forms and avoids CORS ambiguity.
+  const iframeName = 'googleFormSubmitTarget';
+  let iframe = document.getElementById(iframeName);
+  if(!iframe){
+    iframe = document.createElement('iframe');
+    iframe.id = iframeName;
+    iframe.name = iframeName;
+    iframe.style.display = 'none';
+    document.body.appendChild(iframe);
+  }
+
+  const form = document.createElement('form');
+  form.method = 'POST';
+  form.action = FORM_ACTION;
+  form.target = iframeName;
+  form.style.display = 'none';
+
+  for(const [name,value] of params.entries()){
+    const input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = name;
+    input.value = value;
+    form.appendChild(input);
+  }
+
+  // Standard submit value used by Google Forms.
+  const submitInput = document.createElement('input');
+  submitInput.type = 'hidden';
+  submitInput.name = 'submit';
+  submitInput.value = 'Submit';
+  form.appendChild(submitInput);
+
+  document.body.appendChild(form);
+  form.submit();
+
+  // The response loads cross-origin in the hidden iframe, so its contents cannot
+  // be inspected from this page. Give the POST time to leave before showing success.
+  setTimeout(()=>{
+    form.remove();
+    showSubmitted();
+  }, 1200);
 }
 
 /* ═══════ BUDGET CALCULATOR ═════════════════════════════════════════════════ */
