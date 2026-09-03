@@ -63,7 +63,7 @@ label{display:block;font-size:12px;font-weight:600;color:var(--gray-600);margin-
   text-transform:uppercase;letter-spacing:.04em}
 label .req{color:var(--red);margin-left:2px}
 label .note{font-weight:400;text-transform:none;letter-spacing:0;color:var(--gray-400);margin-left:4px}
-select,input[type=text],input[type=number],textarea{
+select,input[type=text],input[type=email],input[type=number],textarea{
   width:100%;padding:7px 10px;border:1px solid var(--gray-200);border-radius:var(--radius);
   font-size:13px;color:var(--gray-900);background:var(--white);transition:border-color .15s}
 select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%239AA0AE' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -309,6 +309,28 @@ select.err,input.err{border-color:var(--red)}
     <div class="section-eyebrow">Tab 2 of 6</div>
     <div class="section-title">EBCx Provider Information</div>
     <div class="section-desc">Complete all required fields. This section accounts for 20% of your progress score.</div>
+    <div class="section-desc" style="margin-top:6px"><strong>Note:</strong> We capture information on the person that completes the survey so we can follow up if clarifications are required.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Respondent information</div>
+    <div class="form-grid">
+      <div class="field">
+        <label>Name <span class="req">*</span></label>
+        <input type="text" id="q_name" placeholder="Full name" autocomplete="name">
+        <div class="ferr" id="e_name">Please enter your name.</div>
+      </div>
+      <div class="field">
+        <label>Company name <span class="req">*</span></label>
+        <input type="text" id="q_company" placeholder="Company or organization" autocomplete="organization">
+        <div class="ferr" id="e_company">Please enter your company name.</div>
+      </div>
+      <div class="field">
+        <label>Email address <span class="req">*</span></label>
+        <input type="email" id="q_email" placeholder="name@example.com" autocomplete="email">
+        <div class="ferr" id="e_email">Please enter a valid email address.</div>
+      </div>
+    </div>
   </div>
 
   <div class="card">
@@ -688,6 +710,8 @@ const ACRONYMS = [
 /* ═══════ GOOGLE FORM CONFIG ════════════════════════════════════════════════ */
 const FORM_ACTION = 'https://docs.google.com/forms/d/e/1FAIpQLSeeRd1acFj-E0bbbpNwqQLTc-SoadlFlw_Enlgz1hhqqPqDcA/formResponse';
 const ENTRY = {
+  // Add three Short Answer questions to the Google Form and replace these placeholders.
+  name:'165813849', company:'1856770736', email:'99115822',
   chapter:'entry.1999316725', zip:'entry.11793302', regions:'entry.1717555704',
   years:'entry.712552211', officesize:'entry.537735297', revenue:'entry.210414136', // NOTE: years/officesize currently share the supplied entry ID
   experience:'entry.35705670', ebcx_rev:'entry.236948236', contracts:'entry.650061116',
@@ -1145,6 +1169,11 @@ function validateZip(el){
 function validateAndNext(fromTab){
   if(fromTab===1){
     let ok=true;
+
+    if(!errField('q_name','e_name',v=>v.trim().length>0)) ok=false;
+    if(!errField('q_company','e_company',v=>v.trim().length>0)) ok=false;
+    if(!errField('q_email','e_email',v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()))) ok=false;
+
     // zip is now required
     const zipVal = document.getElementById('q_zip')?.value||'';
     if(!zipVal || !isValidZip(zipVal)){
@@ -1267,8 +1296,18 @@ function showSubmitted(){
 
 function submitSurvey(){
   const {phases,tasks,systems,findings,regions}=collectSubmitData();
+
+  const contactEntries=[ENTRY.name,ENTRY.company,ENTRY.email];
+  if(contactEntries.some(v=>!v || v.startsWith('YOUR_'))){
+    alert('Name, Company name, and Email address have been added to the survey, but their Google Form entry IDs still need to be configured before submissions can be sent.');
+    return;
+  }
+
   const params=new URLSearchParams();
 
+  params.append(ENTRY.name, document.getElementById('q_name').value.trim());
+  params.append(ENTRY.company, document.getElementById('q_company').value.trim());
+  params.append(ENTRY.email, document.getElementById('q_email').value.trim());
   params.append(ENTRY.chapter, document.getElementById('q_chapter').value);
   params.append(ENTRY.zip, document.getElementById('q_zip').value);
   params.append(ENTRY.regions, regions.join(', '));
