@@ -1245,10 +1245,15 @@ function collectSubmitData(){
   PHASES.forEach(ph=>{
     tasks[ph.id]=TASKS[ph.id].map((t,i)=>{
       const customLabel=document.getElementById(`task_other_${ph.id}_${i}`)?.value.trim();
+      const isOther=t.startsWith('Other');
       return {
-        label:customLabel || t,
+        // Keep the chart/category label stable for Power BI.
+        // Any free-text entry from an Other field is stored separately below.
+        label:t,
         pct:parseFloat(document.getElementById(`task_${ph.id}_${i}`)?.value)||0,
-        addl:parseFloat(document.getElementById(`addl_${ph.id}_${i}`)?.value)||0
+        addl:parseFloat(document.getElementById(`addl_${ph.id}_${i}`)?.value)||0,
+        isOther:isOther,
+        otherResponse:isOther ? (customLabel || '') : ''
       };
     });
   });
@@ -1270,10 +1275,15 @@ function collectSubmitData(){
       findingsPct:parseFloat(document.getElementById('sysfind_'+sys.id)?.value)||0,
       findings:sys.findings.map((f,i)=>{
         const customLabel=document.getElementById(`find_other_${sys.id}_${i}`)?.value.trim();
+        const isOther=f.startsWith('Other');
         return {
-          label:customLabel || f,
+          // Keep all Other rows labeled exactly as "Other (please specify)".
+          // Store the respondent's typed text separately for reporting.
+          label:f,
           pct:parseFloat(document.getElementById(`find_${sys.id}_${i}`)?.value)||0,
-          comment:document.getElementById(`findcomment_${sys.id}_${i}`)?.value.trim()||''
+          comment:document.getElementById(`findcomment_${sys.id}_${i}`)?.value.trim()||'',
+          isOther:isOther,
+          otherResponse:isOther ? (customLabel || '') : ''
         };
       })
     };
