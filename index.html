@@ -198,6 +198,89 @@ select.err,input.err{border-color:var(--red)}
 
 /* ── phase header big % ── */
 .phase-pct-big{font-size:15px;font-weight:700;color:var(--navy);min-width:52px;text-align:right}
+.task-data-row .pct-inp, .findings-data-row .pct-inp { width:100px !important; }
+
+/* ── Phone layout: keep every budget and findings field inside the screen ── */
+@media (max-width: 640px) {
+  html, body { max-width:100%; overflow-x:clip; }
+  .page { padding: 1rem .65rem 3rem; }
+  .card { padding: .9rem .75rem; }
+  .instr-hero { padding: 1.25rem 1rem; }
+  .instr-hero > div:first-child { flex-direction:column; gap:.65rem !important; }
+  .instr-hero h1 { font-size:19px; }
+  .instr-details-grid { grid-template-columns:minmax(0,1fr) !important; }
+  .topbar { padding:0 10px; }
+  .topbar-inner { height:68px; flex-direction:column; align-items:stretch; justify-content:center; gap:3px; }
+  .topbar-title { font-size:12px; text-align:center; white-space:normal; }
+  .topbar-prog { flex:0 0 auto; width:100%; }
+  .tab-nav { top:68px; }
+  .tab-btn { padding:10px 12px; font-size:12px; }
+  .section-title { font-size:19px; }
+  .phase-header { padding:10px; flex-wrap:wrap; }
+  .phase-name { min-width:0; }
+  .phase-pct-wrap { margin-left:auto; }
+  .phase-body { padding:0 9px 11px; }
+  .bud-2 { grid-template-columns:minmax(0,1fr) 88px; }
+  .bud-phase-label, .bud-label { min-width:0; overflow-wrap:anywhere; }
+  .pct-wrap { max-width:100%; }
+  .tot-bar { flex-wrap:wrap; gap:6px 10px; }
+  .tot-bar > .tot-bar-label { order:0; }
+  .tot-bar > .tot-val { order:0; margin-left:auto; }
+  .tot-bar > .tot-track { order:1; flex:0 0 100%; }
+  .tot-bar > .tot-hint { order:2; width:100%; text-align:left; }
+  .tab-nav-btns { flex-wrap:wrap; }
+  .btn { min-width:0; max-width:100%; padding:0 12px; }
+  .tooltip { width:min(260px, calc(100vw - 60px)) !important; left:auto !important; right:0 !important; top:24px; }
+
+  /* Task detail rows become three labeled fields below each task name. */
+  .task-columns-head, .findings-columns-head, .systems-allocation-head { display:none !important; }
+  .task-data-row { grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:7px !important; padding:12px 0 !important; align-items:start !important; }
+  .task-data-row > span:first-child { grid-column:1/-1; overflow-wrap:anywhere; font-size:13px !important; }
+  .task-data-row .pct-wrap, .findings-data-row .pct-wrap { width:100% !important; min-width:0; }
+  .task-data-row .pct-inp, .findings-data-row .pct-inp { width:100% !important; height:36px !important; font-size:14px !important; }
+  .task-data-row > .pct-wrap::before, .task-project-value::before,
+  .findings-data-row > .pct-wrap::before, .finding-project-value::before {
+    display:block; color:var(--gray-600); font-size:10px; font-weight:600;
+    line-height:1.2; min-height:25px; margin-bottom:4px;
+  }
+  .task-data-row > .pct-wrap:nth-child(2)::before { content:'% of phase'; }
+  .task-project-value::before { content:'% of project'; }
+  .task-data-row > .pct-wrap:nth-child(4)::before { content:"Add'l budget"; }
+  .task-data-row > .pct-wrap::after, .findings-data-row > .pct-wrap::after { top:auto; bottom:10px; transform:none; }
+  .task-project-value, .finding-project-value { display:block; min-width:0; font-size:13px !important; text-align:left !important; }
+  .task-columns-total { grid-template-columns:repeat(3,minmax(0,1fr)) !important; gap:6px !important; }
+  .task-columns-total > span:first-child { grid-column:1/-1; }
+  .task-columns-total > span:nth-child(2), .task-columns-total > span:nth-child(3) { text-align:left !important; }
+  .task-columns-total > span:last-child { display:none; }
+
+  /* System allocations also stack labels above the two inputs. */
+  .systems-allocation-row, .systems-allocation-total { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:8px !important; }
+  .systems-allocation-row { padding:10px 0 !important; }
+  .systems-allocation-row > span:first-child, .systems-allocation-total > span:first-child { grid-column:1/-1; }
+  .systems-allocation-row > div:nth-child(2), .systems-allocation-row > div:nth-child(3) { display:flex; flex-direction:column; align-items:stretch; min-width:0; }
+  .systems-allocation-row > div:nth-child(2)::before, .systems-allocation-row > div:nth-child(3)::before,
+  .systems-allocation-total > .tot-bar::before { display:block; font-size:10px; font-weight:600; color:var(--gray-600); margin-bottom:4px; }
+  .systems-allocation-row > div:nth-child(2)::before { content:'Budget %'; }
+  .systems-allocation-row > div:nth-child(3)::before { content:'Findings %'; }
+  .systems-allocation-row .pct-wrap { width:100% !important; }
+  .systems-allocation-row .pct-inp { width:100% !important; height:36px !important; }
+  .systems-allocation-total > .tot-bar { display:block; min-width:0; padding:7px !important; }
+  .systems-allocation-total > .tot-bar:nth-child(2)::before { content:'Budget total'; }
+  .systems-allocation-total > .tot-bar:nth-child(3)::before { content:'Findings total'; }
+  .systems-allocation-total .tot-track { margin-bottom:4px; }
+  .systems-allocation-total .tot-val { width:auto !important; text-align:left; }
+
+  /* Finding details: two percentage values and a full-width comment field. */
+  .findings-data-row { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:7px !important; padding:12px 0 !important; align-items:start !important; }
+  .findings-data-row > span:first-child { grid-column:1/-1; overflow-wrap:anywhere; font-size:13px !important; }
+  .findings-data-row > .pct-wrap:nth-child(2)::before { content:'% of system'; }
+  .finding-project-value::before { content:'% of total'; }
+  .findings-data-row > input:last-child { grid-column:1/-1; width:100%; height:36px !important; }
+  .findings-columns-total { grid-template-columns:repeat(2,minmax(0,1fr)) !important; gap:6px !important; }
+  .findings-columns-total > span:first-child { grid-column:1/-1; }
+  .findings-columns-total > span:nth-child(2), .findings-columns-total > span:nth-child(3) { text-align:left !important; }
+  .findings-columns-total > span:last-child { display:none; }
+}
 </style>
 </head>
 <body>
@@ -264,7 +347,7 @@ select.err,input.err{border-color:var(--red)}
     </div>
   </div>
 
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-bottom:1rem">
+  <div class="instr-details-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:.875rem;margin-bottom:1rem">
     <div class="card" style="margin-bottom:0">
       <div class="card-title">Survey objectives</div>
       <ul class="obj-list">
@@ -757,6 +840,8 @@ function switchTab(n){
     el.classList.toggle('active', i===n);
   });
   currentTab = n;
+  // Keep the active tab visible inside the horizontally scrollable mobile navigation.
+  document.getElementById('tabn'+n)?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
   window.scrollTo({top:0, behavior:'smooth'});
 }
 
@@ -801,7 +886,7 @@ function buildTaskPhases(){
         </div>
       </div>
       <div class="phase-body">
-        <div style="display:grid;grid-template-columns:1fr 100px 100px 100px;gap:6px;padding:6px 0;border-bottom:1px solid var(--gray-100);margin-top:4px">
+        <div class="task-columns-head" style="display:grid;grid-template-columns:1fr 100px 100px 100px;gap:6px;padding:6px 0;border-bottom:1px solid var(--gray-100);margin-top:4px">
           <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400)">Task</span>
           <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400);text-align:right">
             <span class="tip-wrap" style="justify-content:flex-end">% of phase<span class="tip-icon" tabindex="0">?</span><span class="tooltip" style="left:auto;right:0;width:280px">What % of this phase's budget goes to this task? Each phase must total 100%.</span></span>
@@ -814,7 +899,7 @@ function buildTaskPhases(){
           </span>
         </div>
         <div id="tasks_${ph.id}"></div>
-        <div style="display:grid;grid-template-columns:1fr 100px 100px 100px;gap:6px;align-items:center;padding:5px 0;border-top:1px solid var(--gray-200);margin-top:2px">
+        <div class="task-columns-total" style="display:grid;grid-template-columns:1fr 100px 100px 100px;gap:6px;align-items:center;padding:5px 0;border-top:1px solid var(--gray-200);margin-top:2px">
           <span style="font-size:12px;font-weight:600;color:var(--gray-600)">Total</span>
           <span id="phTotHint_${ph.id}" style="text-align:right;font-size:12px;font-weight:600">—</span>
           <span id="projColTot_${ph.id}" style="text-align:right;font-size:12px;font-weight:600;color:var(--gray-600)">—</span>
@@ -826,15 +911,16 @@ function buildTaskPhases(){
     const taskContainer = block.querySelector(`#tasks_${ph.id}`);
     tasks.forEach((task, i) => {
       const row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:1fr 100px 100px 100px;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid var(--gray-50)';
+      row.className = 'task-data-row';
+      row.style.cssText = 'display:grid;grid-template-columns:minmax(0,1fr) 100px 100px 100px;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid var(--gray-50)';
       const isOther = task.startsWith('Other');
       row.innerHTML = `
         <span style="font-size:12px;color:${isOther?'var(--gray-400)':'var(--gray-900)'};${isOther?'font-style:italic':''}">
           ${isOther ? `<input type="text" id="task_other_${ph.id}_${i}" placeholder="Other (specify)" style="height:28px;font-size:12px;font-style:normal;width:100%">` : task}
         </span>
-        <div class="pct-wrap" style="width:100px"><input type="number" style="width:100px!important" class="pct-inp" id="task_${ph.id}_${i}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onTaskInput('${ph.id}');toggleAddl('${ph.id}',${i})"></div>
-        <span id="proj_${ph.id}_${i}" style="text-align:right;font-size:13px;color:var(--gray-500)">—</span>
-        <div class="pct-wrap" style="width:100px"><input type="number" style="width:100px!important" class="pct-inp addl-inp" id="addl_${ph.id}_${i}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this)"></div>`;
+        <div class="pct-wrap" style="width:100px"><input type="number" class="pct-inp" aria-label="Percent of phase budget for ${task}" id="task_${ph.id}_${i}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onTaskInput('${ph.id}');toggleAddl('${ph.id}',${i})"></div>
+        <span class="task-project-value" id="proj_${ph.id}_${i}" style="text-align:right;font-size:13px;color:var(--gray-500)">—</span>
+        <div class="pct-wrap" style="width:100px"><input type="number" class="pct-inp addl-inp" aria-label="Additional project budget percent for ${task}" id="addl_${ph.id}_${i}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this)"></div>`;
       taskContainer.appendChild(row);
     });
   });
@@ -866,7 +952,7 @@ function buildFindings(){
   step1.className = 'card';
   step1.innerHTML = `
     <div class="card-title">Step 1 — Consider where time and budget are consumed on a project on the various systems and where findings are uncovered.</div>
-    <div style="display:grid;grid-template-columns:1fr 130px 130px;gap:6px;padding-bottom:6px;border-bottom:1px solid var(--gray-100);margin-bottom:4px;align-items:end">
+    <div class="systems-allocation-head" style="display:grid;grid-template-columns:1fr 130px 130px;gap:6px;padding-bottom:6px;border-bottom:1px solid var(--gray-100);margin-bottom:4px;align-items:end">
       <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400)">System</span>
       <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400);text-align:center;line-height:1.3">
         <span class="tip-wrap" style="justify-content:center">Estimated % of project budget<span class="tip-icon" tabindex="0">?</span><span class="tooltip" style="width:260px">What % of the combined Assessment and Investigation phase budget is dedicated to this system? Must total 100%.</span></span>
@@ -876,12 +962,12 @@ function buildFindings(){
       </span>
     </div>
     ${SYSTEMS.map(sys=>`
-      <div style="display:grid;grid-template-columns:1fr 130px 130px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--gray-50)">
+      <div class="systems-allocation-row" style="display:grid;grid-template-columns:1fr 130px 130px;gap:6px;align-items:center;padding:5px 0;border-bottom:1px solid var(--gray-50)">
         <span class="bud-phase-label">${sys.label}</span>
         <div style="display:flex;justify-content:center"><div class="pct-wrap"><input type="number" class="pct-inp" id="sys_${sys.id}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onSysInput()"></div></div>
         <div style="display:flex;justify-content:center"><div class="pct-wrap"><input type="number" class="pct-inp" id="sysfind_${sys.id}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onSysFindInput()"></div></div>
       </div>`).join('')}
-    <div style="display:grid;grid-template-columns:1fr 130px 130px;gap:6px;margin-top:10px;align-items:center">
+    <div class="systems-allocation-total" style="display:grid;grid-template-columns:1fr 130px 130px;gap:6px;margin-top:10px;align-items:center">
       <span style="font-size:12px;font-weight:600;color:var(--gray-600)">Totals</span>
       <div class="tot-bar" style="margin:0">
         <div class="tot-track"><div class="tot-fill" id="sysTotFill" style="width:0%"></div></div>
@@ -934,7 +1020,7 @@ function buildFindings(){
         </div>
       </div>
       <div class="phase-body">
-        <div style="display:grid;grid-template-columns:1fr 100px 100px 130px;gap:6px;padding:6px 0;border-bottom:1px solid var(--gray-100);margin-top:4px">
+        <div class="findings-columns-head" style="display:grid;grid-template-columns:1fr 100px 100px 130px;gap:6px;padding:6px 0;border-bottom:1px solid var(--gray-100);margin-top:4px">
           <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400)">Finding type</span>
           <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400);text-align:right">
             <span class="tip-wrap" style="justify-content:flex-end">% of system<span class="tip-icon" tabindex="0">?</span><span class="tooltip" style="left:auto;right:0;width:280px">What % of this system's findings fall into this category? Each system must total 100%.</span></span>
@@ -945,7 +1031,7 @@ function buildFindings(){
           <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--gray-400)">Comments</span>
         </div>
         <div id="finds_${sys.id}"></div>
-        <div style="display:grid;grid-template-columns:1fr 100px 100px 130px;gap:6px;align-items:center;padding:5px 0;border-top:1px solid var(--gray-200);margin-top:2px">
+        <div class="findings-columns-total" style="display:grid;grid-template-columns:1fr 100px 100px 130px;gap:6px;align-items:center;padding:5px 0;border-top:1px solid var(--gray-200);margin-top:2px">
           <span style="font-size:12px;font-weight:600;color:var(--gray-600)">Total</span>
           <span id="sysTotHint_${sys.id}" style="text-align:right;font-size:12px;font-weight:600">—</span>
           <span id="findProjColTot_${sys.id}" style="text-align:right;font-size:12px;font-weight:600;color:var(--gray-600)">—</span>
@@ -957,14 +1043,15 @@ function buildFindings(){
     const fc = block.querySelector(`#finds_${sys.id}`);
     sys.findings.forEach((f, i) => {
       const row = document.createElement('div');
-      row.style.cssText = 'display:grid;grid-template-columns:1fr 100px 100px 130px;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid var(--gray-50)';
+      row.className = 'findings-data-row';
+      row.style.cssText = 'display:grid;grid-template-columns:minmax(0,1fr) 100px 100px 130px;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid var(--gray-50)';
       const isOther = f.startsWith('Other');
       row.innerHTML = `
         <span style="font-size:12px;color:${isOther?'var(--gray-400)':'var(--gray-900)'};${isOther?'font-style:italic':''}">
           ${isOther ? `<input type="text" id="find_other_${sys.id}_${i}" placeholder="Other (specify)" style="height:26px;font-size:12px;font-style:normal;width:100%">` : f}
         </span>
-        <div class="pct-wrap" style="width:100px"><input type="number" style="width:100px!important" class="pct-inp" id="find_${sys.id}_${i}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onFindInput('${sys.id}')"></div>
-        <span id="findproj_${sys.id}_${i}" style="text-align:right;font-size:13px;color:var(--gray-500)">—</span>
+        <div class="pct-wrap" style="width:100px"><input type="number" class="pct-inp" aria-label="Percent of system findings for ${f}" id="find_${sys.id}_${i}" min="0" max="100" step="0.01" placeholder="0" oninput="clampPct(this);onFindInput('${sys.id}')"></div>
+        <span class="finding-project-value" id="findproj_${sys.id}_${i}" style="text-align:right;font-size:13px;color:var(--gray-500)">—</span>
         <input type="text" id="findcomment_${sys.id}_${i}" placeholder="Comment…" style="height:26px;font-size:12px;border:1px solid var(--gray-200);border-radius:var(--radius);padding:0 8px">`;
       fc.appendChild(row);
     });
